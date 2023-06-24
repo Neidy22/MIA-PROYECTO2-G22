@@ -29,7 +29,7 @@ class CipherA(object):
         return str(decrypted_text)
 
 
-plain = 'miavacas123456'
-cip = CipherA(plain)
-encryptesU = cip.encrypt('contrasenia1486')
-print(f'Encriptado: {encryptesU}')
+#plain = 'miavacas123456'
+#cip = CipherA(plain)
+#encryptesU = cip.encrypt('contrasenia1486')
+#print(f'Encriptado: {encryptesU}')
