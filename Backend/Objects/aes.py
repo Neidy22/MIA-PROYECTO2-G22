@@ -27,9 +27,3 @@ class CipherA(object):
         padded_decrypted_text = cipher.decrypt(cipher_text)
         decrypted_text = unpad(padded_decrypted_text, self.bs).decode('utf-8')
         return str(decrypted_text)
-
-
-#plain = 'miavacas123456'
-#cip = CipherA(plain)
-#encryptesU = cip.encrypt('contrasenia1486')
-#print(f'Encriptado: {encryptesU}')

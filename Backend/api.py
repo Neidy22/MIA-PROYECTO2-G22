@@ -1,5 +1,5 @@
-from flask import Flask
-
+from flask import Flask, request
+from Objects.myFileSystem import myFileSystem
 app = Flask(__name__)
 
 
@@ -9,6 +9,18 @@ def welcome():
         "message": "La aplicación se ha conectado"
     }
     return resp
+
+
+@app.route("/command", methods=['POST'])
+def input_command():
+    data_input = request.data.decode()
+
+    msg = 'Debes ingresar un comando válido!'
+    if data_input != '':
+
+        msg = myFileSystem.run_console_input(data_input)
+
+    return msg
 
 
 if __name__ == "__main__":

@@ -20,10 +20,11 @@ class App():
         self.response_label.pack()
         self.root.mainloop()
 
-    # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
+
+# -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
 
     def connect_request(self):
-        global is_connected
+
         url = 'http://localhost:5000/'  # --> endpoint para probar la conexión
 
         try:
@@ -37,7 +38,15 @@ class App():
             self.response_label.config(
                 text='No se ha podido conectar! Inténtelo de nuevo')
 
-        # mostrar el mensaje de respuesta para saber si la api se conectó
+
+def send_input(input_text):
+    global console_log
+    try:
+        url = 'http://localhost:5000/command'
+        response = requests.post(url, data=input_text)
+        console_log += response.content.decode()
+    except:
+        console_log += "Ocurrió un error! No se puede procesar tu comando"
 
 
 # -------------------------------------------------------------------VENTANAS-------------------------------------------------------------------
@@ -46,6 +55,8 @@ def login_window():
     raiz = Tk()
     raiz['bg'] = 'black'
     raiz.geometry('450x500')
+    raiz.resizable(False, False)
+
     raiz.title('Ventana Principal')
     t = ttk.Label(raiz, text="Inicio de sesión",
                   background='cyan', font='Arial')
@@ -82,24 +93,37 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
 
     v = Tk()
     v.title("Página de Inicio")
-    v.geometry('1050x500')
+    v.geometry('850x700')
+    v.resizable(False, False)
+
     v['bg'] = 'gray'
-    t = ttk.Label(v, text="Consola", background='gray')
-    t.place(x=50, y=45)
+    t = ttk.Label(v, text="INPUT", background='gray')
+    t.place(x=50, y=185)
 
-    def obtener():
-        result = b.get()
-    b = ttk.Button(v, text="Botón Prueba", command=obtener)
-    b.place(x=55, y=100)
+    t2 = ttk.Label(v, text="OUTPUT", background='gray')
+    t2.place(x=50, y=385)
 
-    bCerrarS = ttk.Button(v, text="Cerrar Sesión", command=v.destroy, width=11)
-    bCerrarS.place(x=500, y=450)
+    def obtener_console_text():
+        input_log = consola_in.get("1.0", "end-1c")
+        send_input(input_log)
+        consola_out.insert('end', console_log)
+
+    b = ttk.Button(v, text="Reporte", command=obtener_console_text)
+    b.place(x=700, y=175)
+
+    bCerrarS = ttk.Button(v, text="Cerrar Sesión", command=v.destroy, width=12)
+    bCerrarS.place(x=375, y=650)
 
     # consolas
-    Consola = Text(v, height=20, width=90)
-    Consola.place(x=50, y=75)
-    Consola.insert('end', console_log)
+    consola_in = Text(v, height=10, width=90)
+    consola_in.place(x=50, y=205)
+
+    consola_out = Text(v, height=10, width=90)
+    consola_out.place(x=50, y=405)
+    consola_out.insert('end', console_log)
+
     v.mainloop()
 
 
 App()
+# mostrarInicio()
