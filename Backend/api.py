@@ -1,3 +1,4 @@
+# coding=utf-8
 from flask import Flask, request
 from myFileSystem import myFileSystem
 app = Flask(__name__)
