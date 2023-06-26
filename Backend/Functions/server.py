@@ -116,8 +116,8 @@ class Server:
     @classmethod
     def get_absolute_path(self, path):
         path_a = path.replace('\"', "")
-        path_a = path_a.replace('/', '\\')
-        abs_path = f'..\..\Archivos{path_a}'
+        # path_a = path_a.replace('/', '\\')
+        abs_path = f'../../Archivos{path_a}'
         return abs_path
 
 
