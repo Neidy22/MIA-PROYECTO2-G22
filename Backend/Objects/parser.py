@@ -17,7 +17,8 @@ class Parser:
         """
         command_list = list()
 
-        lines = my_file.readlines()
+        # lines = my_file.readlines()
+        lines = my_file.split("\n")
 
         # Obtener los comandos
         for line in lines:

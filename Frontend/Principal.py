@@ -23,6 +23,7 @@ class App():
 
 # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
 
+
     def connect_request(self):
 
         url = 'http://localhost:5000/'  # --> endpoint para probar la conexión
@@ -44,9 +45,9 @@ def send_input(input_text):
     try:
         url = 'http://localhost:5000/command'
         response = requests.post(url, data=input_text)
-        console_log += response.content.decode()
+        console_log = response.content.decode()
     except:
-        console_log += "Ocurrió un error! No se puede procesar tu comando"
+        console_log = "Ocurrió un error! No se puede procesar tu petición"
 
 
 # -------------------------------------------------------------------VENTANAS-------------------------------------------------------------------
