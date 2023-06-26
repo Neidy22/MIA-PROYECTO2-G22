@@ -15,16 +15,18 @@ class Server:
 
             if os.path.exists(path+name):
                 os.remove(path+name)
-                msg = f'Se elimino el archivo {} exitosamente \n'.format(name)
+                msg = 'Se elimino el archivo {} exitosamente \n'.format(name)
             else:
-                msg = f'El archivo {} no existe en la ruta {} \n'.format(name, path)
+                msg = 'El archivo {} no existe en la ruta {} \n'.format(
+                    name, path)
 
         else:  # remover la carpeta
             try:
                 os.rmdir(path)
-                msg = f'La carpeta {} fue eliminada exitosamente \n'.format(name)
+                msg = 'La carpeta {} fue eliminada exitosamente \n'.format(
+                    name)
             except OSError as e:
-                msg = f'La carpeta {} no existe en el sistema \n'.format(path)
+                msg = 'La carpeta {} no existe en el sistema \n'.format(path)
         return msg
 
     @classmethod
@@ -42,9 +44,10 @@ class Server:
             my_file = open(path, "w")
             my_file.write(body)
             my_file.close()
-            msg = f'Se modificó el contenido del archivo ubicado en la ruta {}'.format(path)
+            msg = 'Se modificó el contenido del archivo ubicado en la ruta {}'.format(
+                path)
         else:
-            msg = f'La ruta del archivo {} no existe en el server'.format(path)
+            msg = 'La ruta del archivo {} no existe en el server'.format(path)
 
         return msg
 
