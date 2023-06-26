@@ -153,9 +153,12 @@ class myFileSystem:
         return msg
 
 
+'''
 content = ''
 with open('..\Archivos\prueba1.mia', 'r') as file:
     content = file.read()
 
 mensaje = myFileSystem.run_file(content)
 print(mensaje)
+
+'''
