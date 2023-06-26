@@ -27,7 +27,7 @@ class App():
 
     def connect_request(self):
 
-        url = 'http://localhost:5000/'  # --> endpoint para probar la conexión
+        url = 'http://127.0.0.1:5000/'  # --> endpoint para probar la conexión
 
         try:
             response = requests.get(url)  # --> para enviar el url
@@ -44,7 +44,7 @@ class App():
 def send_input(input_text):
     global console_log
     try:
-        url = 'http://localhost:5000/command'
+        url = 'http://127.0.0.1:5000/command'
         response = requests.post(url, data=input_text)
         console_log = response.content.decode()
     except:
