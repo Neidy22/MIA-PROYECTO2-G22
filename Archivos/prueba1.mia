@@ -1,0 +1,20 @@
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido del archivo 1" -type->server
+create -name->"prueba 2.txt" -path->/"carpeta 2"/ -body->"Este es el contenido del archivo 2" -type->bucket
+delete -path->/carpeta1/ -name->prueba1.txt -type->server
+delete -path->/"carpeta 2"/ -type->bucket
+Copy -from->/carpeta1/prueba1.txt -to->/"carpeta 2"/ -type_to->sever -type_from->bucket
+Copy -from->/"carpeta 2"/ -to->/carpeta1/ -type_to->bucket -type_from->bucket
+transfer -from->/carpeta1/prueba1.txt -to->/"carpeta 2"/ -type_to->sever -type_from->bucket
+transfer -from->/"carpeta 2"/ -to->/carpeta1/ -type_to->sever -type_from->bucket
+rename -path->/carpeta1/prueba1.txt -name->b1.txt -type->server
+rename -path->/carpeta1/prueba1.txt –name->b1.txt -type->server
+modify -path->/carpeta1/prueba1.txt -body->" este es el nuevo contenido del archivo" -type->bucket
+Backup -type_to->server -type_from->bucket -name->"copia_1 G7"
+Backup -type_to->bucket -type_from->bucket -ip->3.144.137.114 -name->"copia_1G7" -port->3000
+Recovery -type_to->server -type_from->bucket -name->"copia_1 G7"
+Recovery -type_to->bucket -type_from->bucket -ip->3.144.137.114 -name->"copia_1G7" -port->3000
+Delete_all -type->server
+open -type->server -name->archivo1.txt
+open -type->bucket -ip->3.144.137.114 -name->"archivo1.txt" -port->3000
+
+
