@@ -124,9 +124,12 @@ class Server:
         return abs_path
 
 
+'''
 print(Server.modify('/"Pruebas a modificar"/modificar.txt',
       "este es el nuevo contenido modificado"))
 print(Server.open(None, None, '/"Pruebas a modificar"/abrir.txt'))
 print(Server.transfer_server_server('/"Pruebas a modificar"/transferir.txt',
       '/"Pruebas a borrar"/borrar2'))
 print(Server.delete('/"Pruebas a borrar"/borrar2/', "borrado 2.txt"))
+
+'''
