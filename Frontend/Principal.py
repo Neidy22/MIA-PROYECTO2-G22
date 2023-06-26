@@ -1,7 +1,12 @@
-# coding=utf-8
+
+
 from tkinter import *
 from tkinter import ttk
+
 import requests
+
+import matplotlib
+matplotlib.use('TkAgg')
 
 
 # Variable que me va a permitir manejar todos los comandos ya sea en el server, bucket
