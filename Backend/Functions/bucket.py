@@ -41,6 +41,23 @@ class Bucket:
         return msg
 
     @classmethod
+    def modify(self, path, body):
+        path = self.get_absolute_path(path)
+        body = body.strip('\"')
+        msg = ''
+        try:
+            # obtener el el objeto del archivo
+            my_file = s3_resource.Object(BUCKET_NAME, path)
+            # modificar el contenido del archivo
+            my_file.put(Body=body.encode(), ContentType='text/plain')
+
+            msg = 'Se modificó correctamente el contenido del archivo {}'.format(
+                path)
+        except:
+            msg = 'Error! no se pudo modificar el contenido del archivo!'
+        return msg
+
+    @classmethod
     def get_absolute_path(self, path):
         path_a = path.replace('\"', "")
         # path_a = path_a.replace('/', '\\')
@@ -48,4 +65,6 @@ class Bucket:
         return abs_path
 
 
-print(Bucket.delete('/"pruebas delete"/', None))
+# print(Bucket.delete('/"pruebas delete"/', None))
+print(Bucket.modify('/"Pruebas a modificar"/modificar.txt',
+      "Este es el contenido nuevo probando s3"))
