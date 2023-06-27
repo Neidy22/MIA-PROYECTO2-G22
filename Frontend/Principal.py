@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 import requests
 
 
@@ -85,6 +86,7 @@ def login_window():
     b = ttk.Button(raiz, text="Iniciar Sesión", command=obtener)
 
     b.place(x=175, y=180)
+
     # Salir y terminar el programa
     ttk.Button(raiz, text='Salir', command=raiz.destroy).pack(side=BOTTOM)
 
@@ -121,6 +123,17 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     consola_out = Text(v, height=10, width=90)
     consola_out.place(x=50, y=405)
     consola_out.insert('end', console_log)
+    
+    #Boton CargarArchivo
+    def cargarArchivo():
+        archivo = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")])
+        if archivo:
+            print("Archivo seleccionado:", archivo)
+            #Operaciones con el archivo
+
+    
+    botonCargar = ttk.Button(v, text="Cargar archivo", command=cargarArchivo)
+    botonCargar.place(x=186,y=80) #Setear las coordenadas 
 
     v.mainloop()
 
