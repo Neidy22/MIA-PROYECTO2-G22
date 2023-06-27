@@ -41,6 +41,51 @@ class Bucket:
         return msg
 
     @classmethod
+    def modify(self, path, body):
+        path = self.get_absolute_path(path)
+        body = body.strip('\"')
+        msg = ''
+        try:
+            # obtener el el objeto del archivo
+            my_file = s3_resource.Object(BUCKET_NAME, path)
+            # modificar el contenido del archivo
+            my_file.put(Body=body.encode(), ContentType='text/plain')
+
+            msg = 'Se modificó correctamente el contenido del archivo {}'.format(
+                path)
+        except:
+            msg = 'Error! no se pudo modificar el contenido del archivo!'
+        return msg
+
+    @classmethod
+    def transfer(self):
+        pass
+
+    @classmethod
+    def recovery(self):
+        pass
+
+    @classmethod
+    def open(self, ip, port, name):
+        name = self.get_absolute_path(name)
+
+        msg = ''
+        try:
+            if ip == None and port == None:  # se trabajará en el propio bucket
+                my_bucket = s3_resource.Object(BUCKET_NAME, name)
+                my_file_content = my_bucket.get(
+                )['Body'].read().decode('utf-8')
+                msg = my_file_content
+                msg += "\n"
+
+            else:  # se trabajará en el bucket del otro equipo
+                pass
+        except:
+            msg = 'Ha ocurrido un error! El archivo {} no se ha podido abrir'.format(
+                name)
+        return msg
+
+    @classmethod
     def get_absolute_path(self, path):
         path_a = path.replace('\"', "")
         # path_a = path_a.replace('/', '\\')
@@ -48,4 +93,7 @@ class Bucket:
         return abs_path
 
 
-print(Bucket.delete('/"pruebas delete"/', None))
+# print(Bucket.delete('/"pruebas delete"/', None))
+# print(Bucket.modify('/"Pruebas a modificar"/modificar.txt',
+#      "Este es el contenido nuevo probando s3"))
+print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))

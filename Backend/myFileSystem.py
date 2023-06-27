@@ -1,5 +1,6 @@
 from Objects.parser import Parser
 from Functions.server import Server
+from Functions.bucket import Bucket
 
 
 SERVER = 'server'
@@ -71,7 +72,8 @@ class myFileSystem:
                 'path'), command.parameters.get('name'))
 
         else:  # ejecutará el comando en el bucket
-            pass
+            msg = Bucket.delete(command.parameters.get(
+                'path'), command.parameters.get('name'))
 
         return msg
 
@@ -109,6 +111,9 @@ class myFileSystem:
         msg = ''
         if command.parameters.get('type').lower() == SERVER:
             msg = Server.modify(command.parameters.get(
+                'path'), command.parameters.get('body'))
+        else:
+            msg = Bucket.modify(command.parameters.get(
                 'path'), command.parameters.get('body'))
         return msg
 
