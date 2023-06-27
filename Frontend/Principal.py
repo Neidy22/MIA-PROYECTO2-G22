@@ -1,12 +1,15 @@
+
+
 from tkinter import *
 from tkinter import ttk
-from tkinter import filedialog
+
 import requests
 
 
 # Variable que me va a permitir manejar todos los comandos ya sea en el server, bucket
 
 console_log = ''
+ip = ''
 
 
 class App():
@@ -14,8 +17,16 @@ class App():
     def __init__(self):
         self.console_log = ''
         self.root = Tk()
+        self.ip = Entry(self.root)
+        self.ip.place(x=25, y=25, width=200)
+
+        def obtener():
+            global ip
+            ip = self.ip.get()
+            self.connect_request()
+
         self.btn = ttk.Button(self.root, text='Connect',
-                              command=self.connect_request)
+                              command=obtener)
         self.btn.pack()
         self.response_label = ttk.Label(self.root, text='')
         self.response_label.pack()
@@ -25,29 +36,31 @@ class App():
 # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
 
     def connect_request(self):
+        global ip
+        url = f'http://{ip}:5000'  # --> endpoint para probar la conexión
+        # url = 'http://127.0.0.1:5000/'
 
-        url = 'http://localhost:5000/'  # --> endpoint para probar la conexión
+        # try:
+        response = requests.get(url)  # --> para enviar el url
+        # si la conexión fue exitosa
+        self.response_label.config(text=response.json()['message'])
+        self.root.destroy()
+        login_window()
 
-        try:
-            response = requests.get(url)  # --> para enviar el url
-            # si la conexión fue exitosa
-            self.response_label.config(text=response.json()['message'])
-            self.root.destroy()
-            login_window()
-
-        except:
-            self.response_label.config(
-                text='No se ha podido conectar! Inténtelo de nuevo')
+        # except:
+        #    self.response_label.config(
+        #        text='No se ha podido conectar! Inténtelo de nuevo')
 
 
 def send_input(input_text):
-    global console_log
+    global console_log, ip
     try:
-        url = 'http://localhost:5000/command'
+        url = f'http://{ip}:5000/command'
+        # url = 'http://127.0.0.1:5000/command'
         response = requests.post(url, data=input_text)
-        console_log += response.content.decode()
+        console_log = response.content.decode()
     except:
-        console_log += "Ocurrió un error! No se puede procesar tu comando"
+        console_log = "Ocurrió un error! No se puede procesar tu petición"
 
 
 # -------------------------------------------------------------------VENTANAS-------------------------------------------------------------------
@@ -86,7 +99,6 @@ def login_window():
     b = ttk.Button(raiz, text="Iniciar Sesión", command=obtener)
 
     b.place(x=175, y=180)
-
     # Salir y terminar el programa
     ttk.Button(raiz, text='Salir', command=raiz.destroy).pack(side=BOTTOM)
 
@@ -123,17 +135,6 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     consola_out = Text(v, height=10, width=90)
     consola_out.place(x=50, y=405)
     consola_out.insert('end', console_log)
-    
-    #Boton CargarArchivo
-    def cargarArchivo():
-        archivo = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")])
-        if archivo:
-            print("Archivo seleccionado:", archivo)
-            #Operaciones con el archivo
-
-    
-    botonCargar = ttk.Button(v, text="Cargar archivo", command=cargarArchivo)
-    botonCargar.place(x=186,y=80) #Setear las coordenadas 
 
     v.mainloop()
 
