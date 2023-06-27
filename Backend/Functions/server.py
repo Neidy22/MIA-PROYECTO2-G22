@@ -46,7 +46,7 @@ class Server:
         return msg
 
     @classmethod 
-    def copiar(self, origen, destino): #Faltan validaciones de tipos de from y to
+    def copyServerServer(self, origen, destino): #Faltan validaciones de tipos de from y to
         mensaje = ""
         origen = self.get_absolute_path(origen).replace("\"", "")
         destino = self.get_absolute_path(destino).replace("\"", "")

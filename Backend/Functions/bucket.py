@@ -64,6 +64,33 @@ class Bucket:
                 path)
 
         return msg
+    
+    @classmethod  
+    def copiar_archivos(self, origen, destino):
+        bucket = "NombreBucket" #Reemplazar con el nombre de mi bucket
+        if origen.endswith('/'): #Si el origen es una carpeta
+            #Lista de objetos
+            objetos = s3.list_objects_v2(Bucket=bucket, Prefix=origen) #Sustituir el nombre del bucket
+
+            if 'Contents' not in objetos:
+                return "No se encontraron archivos en la carpeta de origen."
+
+            # Copiar cada archivo a la carpeta de destino
+            for objeto in objetos['Contents']:
+                origen_archivo = objeto['Key']
+                destino_archivo = destino + origen_archivo.split('/')[-1]  #Construyendo la ruta de destino
+                s3.copy_object(Bucket=bucket, CopySource={'Bucket': bucket, 'Key': origen_archivo}, Key=destino_archivo)
+            return "Los archivos han sido copiados exitosamente."
+        else: #Si el origen es un archivo
+            try:
+                s3.head_object(Bucket=bucket, Key=origen)
+                s3.copy_object(Bucket=bucket, CopySource={'Bucket': bucket, 'Key': origen}, Key=destino) #Copiando el archivo
+                return "Archivo copiado exitosamente."
+            except s3.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == '404':
+                    return "El archivo a copiar no existe."
+                else:
+                    return "Se produjo un error al verificar el archivo de origen."
 
     @classmethod
     def modify(self, path, body):
