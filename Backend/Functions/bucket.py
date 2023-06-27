@@ -104,6 +104,7 @@ class Bucket:
     @classmethod
     def recovery_bucket_bucket(self, ip, port, name):
         msg = ''
+
         # la ruta abosulta en el proyecto en el bucket
         name = self.get_absolute_path_bucket(name)
 
@@ -113,13 +114,15 @@ class Bucket:
                 my_bucket = s3_resource.Bucket(BUCKET_NAME)
                 elements = my_bucket.objects.filter(Prefix=name)
                 for element in elements:
-                    src = {'Bucket': BUCKET_NAME, 'key': element.key}
-                    dest = element.key.split('/')
-                    dest = dest[0] + dest[2:]
-                    print("Dest: " + dest)
-                    s3_resource.meta.client.copy(src, BUCKET_NAME, dest)
+                    # print(element.key)
+                    aux_key = element.key.split('/')[2:]
+                    aux_key = "/".join(aux_key)
 
-                msg = "Recovery bucket-bucket exitoso"
+                    dest_path = 'Archivos/' + aux_key
+                    s3_resource.Object(BUCKET_NAME, dest_path).copy_from(
+                        CopySource="{}/{}".format(BUCKET_NAME, element.key))
+
+                    msg = "Recovery bucket-bucket exitoso"
 
             except:
                 msg = "Ocurrió un error! No se pudo hacer el recovery bucket-bucket"
@@ -168,7 +171,7 @@ class Bucket:
 
         my_bucket = s3_resource.Bucket(bucket_name)
         elements = my_bucket.objects.filter(Prefix=prefix)
-        print(elements)
+        # print(elements)
 
         for element in elements:
             # print(element.key)
@@ -199,4 +202,5 @@ class Bucket:
 # print(Bucket.modify('/"Pruebas a modificar"/modificar.txt',
 #      "Este es el contenido nuevo probando s3"))
 # print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))
-print(Bucket.recovery_bucket_server(None, None, '/"copia g22"/'))
+# print(Bucket.recovery_bucket_server(None, None, '/"copia g22"/'))
+print(Bucket.recovery_bucket_bucket(None, None, '/"copia g22"/'))
