@@ -24,18 +24,24 @@ class Bucket:
     @classmethod
     def delete(self, path, name):
         msg = ''
-        path = self.get_absolute_path(path)
+        path = self.get_absolute_path_bucket(path)
 
         try:
             if name != None:  # eliminar archivo
                 name = name.strip('\"')
+
                 s3_resource.Object(BUCKET_NAME, path + name).delete()
                 msg = "Se ha eliminado el archivo en la ruta {} correctamente".format(
                     path+name)
             else:  # eliminar carpeta
-                s3_resource.Object(BUCKET_NAME, path).delete()
-                msg = "Se ha eliminado la carpeta en la ruta {} correctamente".format(
-                    path)
+
+                # listar los elementos de la carpeta
+                my_bucket = s3_resource.Bucket(BUCKET_NAME)
+                elements = my_bucket.objects.filter(Prefix=path)
+
+                # recorrer la lista y eliminar elemento por elemento
+                for element in elements:
+                    s3_resource.Object(BUCKET_NAME, element.key).delete()
 
         except:
             msg = "Ha ocurrido un error! No se puedo eliminar la ruta {} especificada".format(
@@ -61,7 +67,39 @@ class Bucket:
         return msg
 
     @classmethod
-    def transfer(self):
+    def transfer_server_bucket(self):
+        pass
+
+    @classmethod
+    def transfer_bucket_server(self, from_path, to_path):
+        msg = ''
+        from_path = from_path.replace('"', "")
+        # from_path = self.get_absolute_path_bucket(from_path)
+        to_path = self.get_absolute_path_server(to_path)
+        try:
+            # descargar en la carpeta Archivos la ruta en el bucket
+            self.download_folder(BUCKET_NAME, from_path, to_path)
+
+            # eliminar en el bucket la ruta
+            if from_path.endswith('/'):  # es una carpeta
+                # print("eliminar carpeta {}".format(from_path))
+                self.delete(from_path, None)
+
+            else:  # es un archivo
+                name = "/"+from_path.split('/')[-1]
+                from_path = from_path.split('/')[:-1]
+                from_path = "/".join(from_path)
+                self.delete(from_path, name)
+
+            msg = "Tranferencia bucket-server exitosa"
+
+        except:
+            msg = "Ocurrió un error! No se puedo realizar la transferencia bucket-server"
+
+        return msg
+
+    @classmethod
+    def transfer_bucket_bucket(self):
         pass
 
     @classmethod
@@ -203,4 +241,6 @@ class Bucket:
 #      "Este es el contenido nuevo probando s3"))
 # print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))
 # print(Bucket.recovery_bucket_server(None, None, '/"copia g22"/'))
-print(Bucket.recovery_bucket_bucket(None, None, '/"copia g22"/'))
+# print(Bucket.recovery_bucket_bucket(None, None, '/"copia g22"/'))
+print(Bucket.transfer_bucket_server('/"copia g22"/', '/"Probando"/'))
+print(Bucket.transfer_bucket_server('/borrar1.txt', '/"prueba 2"/'))
