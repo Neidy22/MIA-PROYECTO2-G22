@@ -66,8 +66,10 @@ class Bucket:
         return msg
     
     @classmethod  
-    def copiar_archivos(self, origen, destino):
+    def copyBucketBucket(self, origen, destino):
         bucket = "NombreBucket" #Reemplazar con el nombre de mi bucket
+        origen = self.get_absolute_path(origen)
+        destino = self.get_absolute_path(destino)
         if origen.endswith('/'): #Si el origen es una carpeta
             #Lista de objetos
             objetos = s3.list_objects_v2(Bucket=bucket, Prefix=origen) #Sustituir el nombre del bucket
@@ -112,6 +114,31 @@ class Bucket:
     @classmethod
     def transfer(self):
         pass
+
+    @classmethod
+    def rename(self, ruta, nuevoNombre):
+        ruta = self.get_absolute_path(ruta)
+        bucket = "NombreBucket"
+        # Verificar si la ruta de origen existe
+        try:
+            s3.head_object(Bucket=bucket, Key=ruta)
+        except s3.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                return "La ruta del archivo o carpeta no existe."
+            else:
+                return "Se produjo un error al verificar la ruta de origen."
+
+        #Ruta destino ya con el nuevo nombre
+        ruta_destino = ruta.rsplit('/', 1)[0] + '/' + nuevoNombre
+
+        try:
+            s3.head_object(Bucket=bucket, Key=ruta_destino)
+            s3.copy_object(Bucket=bucket, CopySource={'Bucket': bucket, 'Key': ruta}, Key=ruta_destino) #Renombrando
+            s3.delete_object(Bucket=bucket, Key=ruta)
+            return "Se ha aplicado el rename exitosamente."
+        except s3.exceptions.ClientError as e:
+            if e.response['Error']['Code'] != '404':
+                return "No es posible renombrar, ya existe el nombre."
 
     @classmethod
     def recovery(self):
