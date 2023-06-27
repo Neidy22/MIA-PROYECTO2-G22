@@ -19,6 +19,31 @@ BUCKET_NAME = 'bucket-mia-proyecto2'
 class Bucket:
 
     @classmethod
+    def create(self, ruta, nombre, contenido):
+        mensaje = ""
+        ruta = self.get_absolute_path(ruta)
+        rutaArchivo = ruta+nombre
+        try:
+            carpetas = ruta.split('/')  #Separando las carpetas de la ruta
+            carpetaActual = ''
+            #Si las carpetas que conforman la ruta no existen, se crean
+            for carpeta in carpetas:
+                if carpetaActual:
+                    existeCarpeta = s3.list_objects_v2(Bucket='nombreBucket', Prefix=carpetaActual)
+                    if 'Contents' not in existeCarpeta:
+                        #La lista de objetos con el prefijo de la carpetaActual está vacía, no existe la carpeta, se crea
+                        s3.put_object(Bucket='nombreBucket', Key=carpetaActual)
+                
+                carpetaActual = os.path.join(carpetaActual, carpeta)
+            
+            #Crear el archivo en la ruta completa
+            s3.put_object(Bucket='nombreBucket', Key=rutaArchivo, Body=contenido)
+            mensaje = "Archivo creado en Amazon S3, en la ruta: " + ruta
+        except Exception as e:
+            mensaje = "Error al crear el archivo por la excepcion: " + str(e)
+        return mensaje
+
+    @classmethod
     def delete(self, path, name):
         msg = ''
         path = self.get_absolute_path(path)
