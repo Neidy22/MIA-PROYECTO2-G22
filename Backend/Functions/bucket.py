@@ -1,9 +1,12 @@
+import os
 import boto3
 from creds import REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from pathlib import Path
 
 # indicando que voy  a consumir el servicio de s3 con las credenciales
-# s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID,
-#                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION)
+s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION)
+
 s3_resource = boto3.resource('s3', aws_access_key_id=AWS_ACCESS_KEY_ID,
                              aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION)
 
@@ -62,8 +65,69 @@ class Bucket:
         pass
 
     @classmethod
-    def recovery(self):
-        pass
+    def recovery_server_bucket(self, ip, port, name):
+        msg = ''
+        # la ruta abosulta en el proyecto en el server
+        name = self.get_absolute_path_server(name)
+        if ip == None and port == None:  # se trabajará sobre nuestro server y nuestro bucket
+            if os.path.exists(name):
+                # si la carpeta del punto de restauración existe copio el contendio de la carpeta name del server en la carpeta Archivos del bucket
+                print("metodo copiar de mi server al bucket")
+
+        else:  # se trabajará en el server del otro equipo
+            pass
+
+        return msg
+
+    @classmethod
+    def recovery_bucket_server(self, ip, port, name):
+        msg = ''
+        # la ruta abosulta en el proyecto en el bucket
+        name = self.get_absolute_path_bucket(name)
+
+        if ip == None and port == None:  # se trabajará sobre nuestro server y nuestro bucket
+
+            # si la carpeta del punto de restauración existe descargo el contenido de la carpeta name en el bucker hacia la carpeta Archivos del server
+            try:
+
+                self.download_folder(BUCKET_NAME, name, '../../Archivos/')
+                msg = "Recovery bucket-server exitoso"
+
+            except:
+                msg = "Ocurrió un error! No se pudo hacer el recovery bucket-server"
+
+        else:  # se trabajará en el server del otro equipo
+            pass
+
+        return msg
+
+    @classmethod
+    def recovery_bucket_bucket(self, ip, port, name):
+        msg = ''
+        # la ruta abosulta en el proyecto en el bucket
+        name = self.get_absolute_path_bucket(name)
+
+        if ip == None and port == None:  # se trabajará sobre nuestro bucket
+            try:
+                # obtengo los elementos de la carpeta en donde está el punto de restauración
+                my_bucket = s3_resource.Bucket(BUCKET_NAME)
+                elements = my_bucket.objects.filter(Prefix=name)
+                for element in elements:
+                    src = {'Bucket': BUCKET_NAME, 'key': element.key}
+                    dest = element.key.split('/')
+                    dest = dest[0] + dest[2:]
+                    print("Dest: " + dest)
+                    s3_resource.meta.client.copy(src, BUCKET_NAME, dest)
+
+                msg = "Recovery bucket-bucket exitoso"
+
+            except:
+                msg = "Ocurrió un error! No se pudo hacer el recovery bucket-bucket"
+
+        else:  # se trabajará en el server del otro equipo
+            pass
+
+        return msg
 
     @classmethod
     def open(self, ip, port, name):
@@ -77,7 +141,6 @@ class Bucket:
                 )['Body'].read().decode('utf-8')
                 msg = my_file_content
                 msg += "\n"
-
             else:  # se trabajará en el bucket del otro equipo
                 pass
         except:
@@ -86,14 +149,54 @@ class Bucket:
         return msg
 
     @classmethod
-    def get_absolute_path(self, path):
+    def get_absolute_path_bucket(self, path):
         path_a = path.replace('\"', "")
         # path_a = path_a.replace('/', '\\')
         abs_path = f'Archivos{path_a}'
         return abs_path
 
+    @classmethod
+    def get_absolute_path_server(self, path):
+        path_a = path.replace('\"', "")
+        # path_a = path_a.replace('/', '\\')
+        abs_path = f'../../Archivos{path_a}'
+        return abs_path
+
+    @classmethod
+    def download_folder(self, bucket_name, prefix, local_directory):
+        # paginator = s3.get_paginator('list_objects')
+
+        my_bucket = s3_resource.Bucket(bucket_name)
+        elements = my_bucket.objects.filter(Prefix=prefix)
+        print(elements)
+
+        for element in elements:
+            # print(element.key)
+
+            # elimino el prefix para no volver a crear las carpetas
+            aux_key = element.key.split('/')[2:]
+            aux_key = "/".join(aux_key)
+
+            actual_path = local_directory + aux_key
+
+            if element.key.endswith('/'):  # es una carpeta
+                if not os.path.exists(actual_path):
+                    os.makedirs(actual_path)
+            else:  # es un archivo
+                # de la ruta actual le elimino la convierto en un array y le quito el último elemento que representa el nombre del archivo
+                actual_file_path = actual_path.split('/')[:-1]
+                # vuelvo a crear la ruta  ahora sin el nombre de archivo solo las carpetas
+                actual_file_path = "/".join(actual_file_path)
+
+                if not os.path.exists(actual_file_path):
+                    os.makedirs(actual_file_path)
+
+                s3.download_file(bucket_name, element.key, os.path.join(
+                    actual_file_path, element.key.split('/')[-1]))
+
 
 # print(Bucket.delete('/"pruebas delete"/', None))
 # print(Bucket.modify('/"Pruebas a modificar"/modificar.txt',
 #      "Este es el contenido nuevo probando s3"))
-print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))
+# print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))
+print(Bucket.recovery_bucket_server(None, None, '/"copia g22"/'))

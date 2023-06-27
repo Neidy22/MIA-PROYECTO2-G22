@@ -154,6 +154,9 @@ class myFileSystem:
         if command.parameters.get('type').lower() == SERVER:
             msg = Server.open(command.parameters.get('ip'), command.parameters.get(
                 'port'), command.parameters.get('name'))
+        else:
+            msg = Bucket.open(command.parameters.get('ip'), command.parameters.get(
+                'port'), command.parameters.get('name'))
 
         return msg
 
