@@ -99,8 +99,46 @@ class Bucket:
         return msg
 
     @classmethod
-    def transfer_bucket_bucket(self):
-        pass
+    def transfer_bucket_bucket(self, from_path, to_path):
+        msg = ''
+        from_path = from_path.replace('"', "")
+        to_path = to_path.replace('"', "")
+
+        abs_from = self.get_absolute_path_bucket(from_path)
+
+        try:
+            # copiar el contenido de la ruta origen a la ruta destino
+            my_bucket = s3_resource.Bucket(BUCKET_NAME)
+            elements = my_bucket.objects.filter(Prefix=abs_from)
+
+            for element in elements:
+                # print(element.key)
+                aux_key = element.key.split('/')[2:]
+                aux_key = "/".join(aux_key)
+                dest_path = self.get_absolute_path_bucket(to_path)
+                dest_path += aux_key
+                # print(dest_path)
+                s3_resource.Object(BUCKET_NAME, dest_path).copy_from(
+                    CopySource="{}/{}".format(BUCKET_NAME, element.key))
+
+            # eliminar el contenido de la ruta origen
+
+            if from_path.endswith('/'):  # es una carpeta
+                # print("eliminar carpeta {}".format(from_path))
+                self.delete(from_path, None)
+
+            else:  # es un archivo
+                name = "/"+from_path.split('/')[-1]
+                from_path = from_path.split('/')[:-1]
+                from_path = "/".join(from_path)
+                self.delete(from_path, name)
+
+            msg = "Tranferencia bucket-bucket exitosa"
+
+        except:
+            msg = "Ocurrión un error! No se pudo hacer la transferencia bucket-bucket"
+
+        return msg
 
     @classmethod
     def recovery_server_bucket(self, ip, port, name):
@@ -160,7 +198,7 @@ class Bucket:
                     s3_resource.Object(BUCKET_NAME, dest_path).copy_from(
                         CopySource="{}/{}".format(BUCKET_NAME, element.key))
 
-                    msg = "Recovery bucket-bucket exitoso"
+                msg = "Recovery bucket-bucket exitoso"
 
             except:
                 msg = "Ocurrió un error! No se pudo hacer el recovery bucket-bucket"
@@ -242,5 +280,6 @@ class Bucket:
 # print(Bucket.open(None, None, '/"Pruebas a modificar"/modificar.txt'))
 # print(Bucket.recovery_bucket_server(None, None, '/"copia g22"/'))
 # print(Bucket.recovery_bucket_bucket(None, None, '/"copia g22"/'))
-print(Bucket.transfer_bucket_server('/"copia g22"/', '/"Probando"/'))
-print(Bucket.transfer_bucket_server('/borrar1.txt', '/"prueba 2"/'))
+# print(Bucket.transfer_bucket_server('/"copia g22"/', '/"Probando"/'))
+# print(Bucket.transfer_bucket_server('/borrar1.txt', '/"prueba 2"/'))
+print(Bucket.transfer_bucket_bucket('/borrar2/', '/"Pruebas a modificar"/'))
