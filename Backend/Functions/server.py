@@ -91,8 +91,17 @@ class Server:
 
     @classmethod
     def recovery_server_server(self, ip, port, name):
-
+        '''
+        Copiar todos los archivos del punto de restauración en la ruta name en el server a la carpeta archivos en el server
+        '''
         name = self.get_absolute_path(name)  # la ruta abosulta en el proyecto
+        if ip == None and port == None:  # se trabajará sobre nuestro server
+            if os.path.exists(name):
+                # si la carpeta del punto de restauración existe copio el contendio de la carpeta name en la carpeta Archivos
+                print("metodo copiar server server")
+
+        else:  # se trabajará en el server del otro equipo
+            pass
 
     @classmethod
     def open(self, ip, port, name):
