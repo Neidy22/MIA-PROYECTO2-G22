@@ -6,6 +6,23 @@ import requests
 class Server:
 
     @classmethod
+    def create(self, nombre, ruta, cuerpo):
+        mensaje = ""
+        nombre = nombre.replace("\"", "")
+        ruta = ruta.replace("\"", "")
+        cuerpo = cuerpo.replace("\"", "")
+        ruta = self.get_absolute_path(ruta)
+        rutaAbs = ruta+nombre
+        if not(os.path.isdir(ruta)): #Si las carpetas de la ruta no existen, deben crearse
+            os.mkdir(ruta)
+            
+        archivo = open(rutaAbs, "w")
+        archivo.write(cuerpo)
+        archivo.close()
+        mensaje = "Archivo creado exitosamente en la ruta: "+rutaAbs
+        return mensaje
+    
+    @classmethod
     def delete(self, path, name):
 
         path = self.get_absolute_path(path)
@@ -31,6 +48,28 @@ class Server:
                     path, e)
         return msg
 
+    @classmethod 
+    def copyServerServer(self, origen, destino):
+        mensaje = ""
+        origen = self.get_absolute_path(origen).replace("\"", "")
+        destino = self.get_absolute_path(destino).replace("\"", "")
+        
+        if os.path.exists(origen) and os.path.exists(destino): #Si existe el origen y el destino
+            if os.path.isdir(origen): #Si el origen es una carpeta, copia todos los archivos de esa carpeta
+                archivos = os.listdir(origen)
+                for archivo in archivos:
+                    shutil.copy(origen+archivo, destino) #copia todos los archivos al destino
+                mensaje = "Se copiaron los archivos de la carpeta: " + origen + " a la carpeta: " + destino 
+            else:
+                shutil.copy(origen, destino) #Copia el archivo
+                mensaje = "Se copió el archivo: " + origen + " a la carpeta: " + destino
+        else:
+            if not(os.path.exists(origen)): #Si el origen no existe
+                mensaje = "La ruta de origen no existe, por lo que no se pudo realizar la copia"
+            else:
+                mensaje = "La ruta destino no existe, por lo que no se pudo realizar la copia"
+        return mensaje
+
     @classmethod
     def modify(self, path, body):
 
@@ -52,6 +91,32 @@ class Server:
             msg = 'La ruta del archivo {} no existe en el server'.format(path)
 
         return msg
+
+    @classmethod
+    def rename(self, ruta, nuevoNombre):
+        mensaje = ""
+        rutaAbs = self.get_absolute_path(ruta)
+        if os.path.isfile(rutaAbs):  #Si es archivo
+            piezas = ruta.split("/")
+            antiguo = piezas[len(piezas)-1]
+            nuevaRuta = rutaAbs.replace(antiguo, nuevoNombre) #Reemplazando el antiguo nombre con el nuevo nombre        
+            if os.path.isfile(nuevaRuta): #Ya hay uno con ese nombre, no se puede renombrar
+                mensaje = "No se puede renombrar, ya hay un archivo con ese nombre."
+            else:
+                os.rename(rutaAbs, nuevaRuta) #Renombrando al archivo
+                mensaje = "Se cambio exitosamente el nombre del archivo."
+        elif os.path.isdir(rutaAbs): #Si es carpeta
+            piezas = ruta.split("/")
+            antiguo = piezas[len(piezas)-2]
+            nuevaRuta = rutaAbs.replace(antiguo, nuevoNombre) #Reemplazando el antiguo nombre con el nuevo nombre
+            if os.path.isdir(nuevaRuta): #Ya hay una carpeta con ese nombre, no se puede renombrar
+                mensaje = "No se puede renombrar, ya hay una carpeta con ese nombre."
+            else:
+                os.rename(rutaAbs, nuevaRuta) #Renombrando la carpeta
+                mensaje = "Se cambio exitosamente el nombre de la carpeta."
+        else:
+            mensaje = "La ruta ingresada no existe."
+        return mensaje
 
     @classmethod
     def transfer_server_server(self, from_path, to_path):
@@ -104,6 +169,29 @@ class Server:
 
         else:  # se trabajará en el server del otro equipo
             pass
+        
+        
+    @classmethod
+    def backupServerServer(nombre_backup):
+        ruta_archivos = '/home/ubuntu/Archivos/'
+        ruta_backup = '/home/ubuntu/' + nombre_backup + "/"
+        try:
+            os.makedirs(ruta_backup) #Creando la carpeta del Backup
+            #Se copian todos los archivos de la carpeta Archivos
+            shutil.copytree(ruta_archivos, ruta_backup)
+            return "El backup se ha creado exitosamente en la carpeta: " + ruta_backup
+        except Exception as e:
+            return "Error al realizar el backup: " + str(e)
+
+    @classmethod
+    def delete_all(self):
+        ruta = "/home/ubuntu/Archivos/" #Ruta de la carpeta archivos en el server
+        try:
+            shutil.rmtree(ruta)
+            return "Se ha vaciado la carpeta Archivos en el server."
+        except Exception as e:
+            print("Error al eliminar el contenido de la carpeta: " + str(e))
+            return "Error al vaciar la carpeta archivos."
 
     @classmethod
     def open(self, ip, port, name):
