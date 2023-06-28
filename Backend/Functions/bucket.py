@@ -103,18 +103,23 @@ class Bucket:
         try:
             for dirpath, dirnames, filenames in os.walk(aux_from):
                 for filename in filenames:
-                    # print(f"File: {os.path.join(dirpath, filename)}")
                     aux_path = dirpath.split('/')[4:]
                     aux_path = "/".join(aux_path)
+
+                    if not aux_path.endswith('/') and aux_path != '':
+                        aux_path = aux_path + '/'
 
                     body = ''
 
                     with open(dirpath+'/'+filename, 'r') as file:
                         body = file.read()
 
-                    self.create(to_path+aux_path+"/", filename, body)
+                    self.create(to_path+aux_path, filename, body)
+                    # print(
+                    #    f'Path: {to_path+aux_path} fileName: {filename} body: {body}')
 
             # eliminar los archivos en la ruta from path del server
+
             if from_path.endswith('/'):  # es carpeta
                 Server.delete(from_path, None)
             else:  # es archivo
@@ -204,11 +209,41 @@ class Bucket:
     def recovery_server_bucket(self, ip, port, name):
         msg = ''
         # la ruta abosulta en el proyecto en el server
-        name = self.get_absolute_path_server(name)
+        aux_name = self.get_absolute_path_server(name)
         if ip == None and port == None:  # se trabajará sobre nuestro server y nuestro bucket
-            if os.path.exists(name):
+            if os.path.exists(aux_name):
                 # si la carpeta del punto de restauración existe copio el contendio de la carpeta name del server en la carpeta Archivos del bucket
-                print("metodo copiar de mi server al bucket")
+
+                try:
+                    for dirpath, dirnames, filenames in os.walk(aux_name):
+                        for filename in filenames:
+                            # Armar la ruta destino en el bucket
+                            aux_path = dirpath.split('/')[4:]
+                            aux_path = "/".join(aux_path)
+
+                            if aux_path != '':  # para carpetas
+                                aux_path = "/"+aux_path + "/"
+                            else:  # para archivos
+                                aux_path = "/"+aux_path
+
+                            # obtener el body del archivo
+                            body = ''
+
+                            with open(dirpath+'/'+filename, 'r') as file:
+                                body = file.read()
+
+                            # print(
+                            #    f'Path: {aux_path} fileName: {filename} body: {body}')
+                            # crear el archivo en el bucket
+                            self.create(aux_path, filename, body)
+
+                    msg = 'Recovery server-bucket exitoso'
+
+                except:
+                    msg = 'No existe el punto de  restauración {} en el server'.format(
+                        name)
+            else:
+                print("No existe! " + aux_name)
 
         else:  # se trabajará en el server del otro equipo
             pass
@@ -289,7 +324,7 @@ class Bucket:
 
     @classmethod
     def get_absolute_path_bucket(self, path):
-        path_a = path.replace('\"', "")
+        path_a = path.replace('"', "")
         # path_a = path_a.replace('/', '\\')
         abs_path = f'Archivos{path_a}'
         return abs_path
@@ -343,4 +378,5 @@ class Bucket:
 # print(Bucket.transfer_bucket_server('/"copia g22"/', '/"Probando"/'))
 # print(Bucket.transfer_bucket_server('/borrar1.txt', '/"prueba 2"/'))
 # print(Bucket.transfer_bucket_bucket('/borrar2/', '/"Pruebas a modificar"/'))
-print(Bucket.transfer_server_bucket('/"prueba 2"/', '/"Nuevo transfer"/'))
+# print(Bucket.transfer_server_bucket('/Prueba/', '/"Nuevo transfer"/'))
+# print(Bucket.recovery_server_bucket(None, None, '/Prueba/'))
