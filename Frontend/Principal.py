@@ -70,7 +70,7 @@ def send_input(input_text):
 def send_input_file(input_file):
     global console_log, ip
     try:
-        url = f'http://{ip}:5000/file_input'
+        url = f'http://{ip}:5000/file'
         # url = 'http://127.0.0.1:5000/command'
         response = requests.post(url, data=input_file)
         console_log = response.content.decode()
