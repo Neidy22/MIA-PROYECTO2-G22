@@ -1,8 +1,8 @@
 import os
 import boto3
-from creds import REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+from Functions.creds import REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from pathlib import Path
-from server import Server
+from Functions.server import Server
 import requests
 
 

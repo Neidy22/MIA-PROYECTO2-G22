@@ -13,6 +13,7 @@ console_log = ''
 ip = ''
 usuarios = []  # Lista en donde se guardan los usuarios para iniciar sesion
 
+
 class App():
 
     def __init__(self):
@@ -36,6 +37,7 @@ class App():
 
 
 # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
+
 
     def connect_request(self):
         global ip
@@ -65,6 +67,17 @@ def send_input(input_text):
         console_log = "Ocurrió un error! No se puede procesar tu petición"
 
 
+def send_input_file(input_file):
+    global console_log, ip
+    try:
+        url = f'http://{ip}:5000/file_input'
+        # url = 'http://127.0.0.1:5000/command'
+        response = requests.post(url, data=input_file)
+        console_log = response.content.decode()
+    except:
+        console_log = "Ocurrió un error! No se puede procesar tu petición"
+
+
 # -------------------------------------------------------------------VENTANAS-------------------------------------------------------------------
 
 def login_window():
@@ -73,7 +86,7 @@ def login_window():
     raiz.geometry('450x500')
     raiz.title('Ventana Principal')
     t = ttk.Label(raiz, text="Inicio de sesión",
-                    background='cyan', font='Arial')
+                  background='cyan', font='Arial')
     t.place(x=165, y=20)
     txtUsr = ttk.Label(raiz, text="Usuario")
     txtUsr.place(x=100, y=58)
@@ -101,13 +114,13 @@ def login_window():
     # Salir y terminar el programa
     ttk.Button(raiz, text='Salir', command=raiz.destroy).pack(side=BOTTOM)
     raiz.mainloop()
-    
+
 
 # Lee los usuarios del usuarios.txt
 def leerUsuarios():
     global usuarios
     # Reemplazar por la ruta del usuarios.txt
-    archivoUsuarios = open("Archivos/usuarios.txt")
+    archivoUsuarios = open("../Archivos/usuarios.txt")
     encriptado = archivoUsuarios.readlines()
     lineas = []
     for l in encriptado:
@@ -135,7 +148,7 @@ def leerUsuarios():
     archivoUsuarios.close()
 
 
-#Metodo de validacion de credenciales
+# Metodo de validacion de credenciales
 def iniciarSesion(usr: str, contra: str):
     global usuarios
     encontrado = False
@@ -144,15 +157,15 @@ def iniciarSesion(usr: str, contra: str):
         if usr == u.usuario:
             if contra == u.contrasena:
                 mensaje = "Inicio de sesion exitoso"
-                #Setear texto
+                # Setear texto
                 mostrarInicio()
             else:
                 mensaje = "Inicio de sesion fallido"
-                #Setear mensaje
+                # Setear mensaje
             encontrado = True
     if not (encontrado):
         mensaje = "Inicio de sesion fallido"
-        #Setear mensaje
+        # Setear mensaje
     return mensaje
 
 
@@ -179,17 +192,24 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
 
     bCerrarS = ttk.Button(v, text="Cerrar Sesión", command=v.destroy, width=12)
     bCerrarS.place(x=375, y=650)
-    
-    #Explorador de archivos
+
+    # Explorador de archivos
     def cargar_archivo():
+
         archivo = filedialog.askopenfilename(filetypes=[("Todos los archivos", "*.*")])
+
         if archivo:
             print("Archivo seleccionado:", archivo)
-            #Lógica de lectura del archivo
-        
+            # Lógica de lectura del archivo
+
+            with open(archivo, 'r') as f:
+                body = f.read()
+                send_input_file(body)
+                consola_out.insert('end', console_log)
+
     boton_cargar = ttk.Button(v, text="Cargar archivo", command=cargar_archivo)
-    boton_cargar.place(x=10,y=10)
-    
+    boton_cargar.place(x=10, y=10)
+
     # consolas
     consola_in = Text(v, height=10, width=90)
     consola_in.place(x=50, y=205)
@@ -198,6 +218,7 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     consola_out.place(x=50, y=405)
     consola_out.insert('end', console_log)
     v.mainloop()
+
 
 App()
 # mostrarInicio()
