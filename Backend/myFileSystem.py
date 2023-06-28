@@ -60,6 +60,13 @@ class myFileSystem:
     @classmethod
     def execute_create(self, command):
         msg = ''
+        # ejecutará el comando en el servidor
+        if command.parameters.get('type').lower() == SERVER:
+            msg = Server.create(command.parameters.get(
+                'path'), command.parameters.get('name'), command.parameters.get('body'))
+        else:  # ejecutará el comando en el bucket
+            msg = Bucket.create(command.parameters.get(
+                'path'), command.parameters.get('name'), command.parameters.get('body'))
         return msg
 
     @classmethod
@@ -80,7 +87,23 @@ class myFileSystem:
     @classmethod
     def execute_copy(self, command):
         msg = ''
+        # ejecutará el comando en el servidor
+        if command.parameters.get('type_from').lower() == SERVER: 
+            if command.parameters.get('type_to').lower() == SERVER: #ServerToServer
+                msg = Server.copyServerServer(command.parameters.get(
+                    'from'), command.parameters.get('to'))
+            elif command.parameters.get('type_to').lower() == BUCKET: #ServerToBucket
+                msg = Bucket.copyServerBucket(command.parameters.get(
+                    'from'), command.parameters.get('to'))
+        elif command.parameters.get('type_from').lower() == BUCKET:
+            if command.parameters.get('type_to').lower() == SERVER: #BucketToServer
+                msg = Bucket.copyBucketServer(command.parameters.get(
+                    'from'), command.parameters.get('to'))
+            elif command.parameters.get('type_to').lower() == BUCKET: #BucketToBucket
+                msg = Bucket.copyBucketBucket(command.parameters.get(
+                    'from'), command.parameters.get('to'))
         return msg
+
 
     @classmethod
     def execute_transfer(self, command):
@@ -107,6 +130,13 @@ class myFileSystem:
     @classmethod
     def execute_rename(self, command):
         msg = ''
+        # ejecutará el comando en el servidor
+        if command.parameters.get('type').lower() == SERVER:
+            msg = Server.rename(command.parameters.get(
+                'path'), command.parameters.get('name'))
+        else:  # ejecutará el comando en el bucket
+            msg = Bucket.rename(command.parameters.get(
+                'path'), command.parameters.get('name'))
         return msg
 
     @classmethod
@@ -123,6 +153,16 @@ class myFileSystem:
     @classmethod
     def execute_backup(self, command):
         msg = ''
+        if command.parameters.get('type_from').lower() == SERVER: 
+            if command.parameters.get('type_to').lower() == SERVER: #ServerToServer
+                msg = Server.backupServerServer(command.parameters.get('name'))
+            elif command.parameters.get('type_to').lower() == BUCKET: #ServerToBucket
+                msg = Bucket.backupServerToBucket(command.parameters.get('name'))
+        elif command.parameters.get('type_from').lower() == BUCKET:
+            if command.parameters.get('type_to').lower() == SERVER: #BucketToServer
+                msg = Bucket.backupBucketToServer(command.parameters.get('name'))
+            elif command.parameters.get('type_to').lower() == BUCKET: #BucketToBucket
+                msg = Bucket.backupBucketToBucket(command.parameters.get('name'))
         return msg
 
     @classmethod
@@ -152,6 +192,11 @@ class myFileSystem:
     @classmethod
     def execute_delete_all(self, command):
         msg = ''
+        # ejecutará el comando en el servidor
+        if command.parameters.get('type').lower() == SERVER:
+            msg = Server.delete_all()
+        else:  # ejecutará el comando en el bucket
+            msg = Bucket.delete_all()
         return msg
 
     @classmethod
