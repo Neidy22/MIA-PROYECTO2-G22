@@ -14,7 +14,7 @@ class Server:
         ruta = self.get_absolute_path(ruta)
         rutaAbs = ruta+nombre
         if not (os.path.exists(ruta)):  # Si las carpetas de la ruta no existen, deben crearse
-            os.mkdir(ruta)
+            os.makedirs(ruta)
 
         archivo = open(rutaAbs, "w")
         archivo.write(cuerpo)
