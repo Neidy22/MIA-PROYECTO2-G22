@@ -195,8 +195,9 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
 
     # Explorador de archivos
     def cargar_archivo():
-        archivo = filedialog.askopenfilename(
-            filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")])
+
+        archivo = filedialog.askopenfilename(filetypes=[("Todos los archivos", "*.*")])
+
         if archivo:
             print("Archivo seleccionado:", archivo)
             # Lógica de lectura del archivo
