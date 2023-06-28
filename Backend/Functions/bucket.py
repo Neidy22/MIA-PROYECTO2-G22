@@ -3,6 +3,7 @@ import boto3
 from creds import REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from pathlib import Path
 from server import Server
+import requests
 
 
 # indicando que voy  a consumir el servicio de s3 con las credenciales
@@ -316,7 +317,10 @@ class Bucket:
                 msg = my_file_content
                 msg += "\n"
             else:  # se trabajará en el bucket del otro equipo
-                pass
+                command = {'name': name, 'type': 'bucket'}
+                url = 'http://{}:{}/file_content'.format(ip, port)
+                req = requests.get(url, params=command)
+                msg = req.text
         except:
             msg = 'Ha ocurrido un error! El archivo {} no se ha podido abrir'.format(
                 name)

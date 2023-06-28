@@ -1,5 +1,6 @@
 import os
 import shutil
+import requests
 
 
 class Server:
@@ -122,7 +123,10 @@ class Server:
                 msg = f"El archivo en la ruta {name} no existe!"
 
         else:  # se abre en nuestro servidor desde otro servidor o bucket
-            pass
+            command = {'name': name, 'type': 'server'}
+            url = 'http://{ip}:{port}/file_content'.format(ip, port)
+            req = requests.get(url, params=command)
+            msg = req.text
 
         return msg
 

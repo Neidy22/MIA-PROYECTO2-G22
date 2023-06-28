@@ -24,6 +24,15 @@ def input_command():
     return msg
 
 
+@app.route("/file_content", methods=['GET'])
+def send_file_content():
+    command = request.params
+    msg = myFileSystem.send_file_content(
+        command.get('type'), command.get('name'))
+
+    return msg
+
+
 if __name__ == "__main__":
     host = '0.0.0.0'
     port = '5000'
