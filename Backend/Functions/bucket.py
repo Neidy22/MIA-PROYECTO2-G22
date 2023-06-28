@@ -189,7 +189,8 @@ class Bucket:
 
     @classmethod
     def copyServerBucket(self, origen, destino):
-        s3 = boto3.client('s3')
+        # s3 = boto3.client('s3')
+
         origen = self.get_absolute_path_server(origen)
         destino = self.get_absolute_path_bucket(destino)
         # Verificando si la ruta de origen existe
