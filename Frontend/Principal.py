@@ -1,7 +1,8 @@
-
-
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
+from Usuario import Usuario
+from aes import CipherA
 
 import requests
 
@@ -10,7 +11,7 @@ import requests
 
 console_log = ''
 ip = ''
-
+usuarios = []  # Lista en donde se guardan los usuarios para iniciar sesion
 
 class App():
 
@@ -31,6 +32,7 @@ class App():
         self.response_label = ttk.Label(self.root, text='')
         self.response_label.pack()
         self.root.mainloop()
+        login_window()
 
 
 # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
@@ -69,23 +71,20 @@ def login_window():
     raiz = Tk()
     raiz['bg'] = 'black'
     raiz.geometry('450x500')
-    raiz.resizable(False, False)
-
     raiz.title('Ventana Principal')
     t = ttk.Label(raiz, text="Inicio de sesión",
-                  background='cyan', font='Arial')
+                    background='cyan', font='Arial')
     t.place(x=165, y=20)
     txtUsr = ttk.Label(raiz, text="Usuario")
     txtUsr.place(x=100, y=58)
     txtUsr = ttk.Label(raiz, text="Contraseña")
     txtUsr.place(x=100, y=110)
+    leerUsuarios()
 
     def obtener():  # Método del botón
         usr = cajaUsr.get()
         contra = cajaContra.get()
-        # iniciarSesion(usr, contra)  # enviar los datos de inicio
-        raiz.destroy()
-        mostrarInicio()
+        iniciarSesion(usr, contra)  # Iniciando sesion
 
     cajaUsr = Entry(raiz)
     # Caja de texto del nombre de usuario
@@ -101,10 +100,63 @@ def login_window():
     b.place(x=175, y=180)
     # Salir y terminar el programa
     ttk.Button(raiz, text='Salir', command=raiz.destroy).pack(side=BOTTOM)
+    raiz.mainloop()
+    
+
+# Lee los usuarios del usuarios.txt
+def leerUsuarios():
+    global usuarios
+    # Reemplazar por la ruta del usuarios.txt
+    archivoUsuarios = open("Archivos/usuarios.txt")
+    encriptado = archivoUsuarios.readlines()
+    lineas = []
+    for l in encriptado:
+        line = l.replace("\n", "")
+        lineas.append(line)
+    contador = 0  # Contador para ver si la linea es par o impar
+    usrs = []
+    contras = []
+    for linea in lineas:
+        if contador % 2 == 0:
+            # La linea es de un nombre de usuario
+            usrs.append(linea)
+        else:
+            # La linea es de una contrasena
+            cifrado = CipherA('miaproyecto12345')
+            desencriptada = cifrado.decrypt(linea)  # Se desencripta la linea
+            contras.append(desencriptada)
+        contador += 1
+    # Llenando la lista de usuarios
+    contadorUsuarios = 0
+    for u in usrs:
+        usuario = Usuario(u, contras[contadorUsuarios])
+        usuarios.append(usuario)
+        contadorUsuarios += 1
+    archivoUsuarios.close()
+
+
+#Metodo de validacion de credenciales
+def iniciarSesion(usr: str, contra: str):
+    global usuarios
+    encontrado = False
+    mensaje = ""
+    for u in usuarios:
+        if usr == u.usuario:
+            if contra == u.contrasena:
+                mensaje = "Inicio de sesion exitoso"
+                #Setear texto
+                mostrarInicio()
+            else:
+                mensaje = "Inicio de sesion fallido"
+                #Setear mensaje
+            encontrado = True
+    if not (encontrado):
+        mensaje = "Inicio de sesion fallido"
+        #Setear mensaje
+    return mensaje
 
 
 def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
-
     v = Tk()
     v.title("Página de Inicio")
     v.geometry('850x700')
@@ -127,7 +179,17 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
 
     bCerrarS = ttk.Button(v, text="Cerrar Sesión", command=v.destroy, width=12)
     bCerrarS.place(x=375, y=650)
-
+    
+    #Explorador de archivos
+    def cargar_archivo():
+        archivo = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt"), ("Todos los archivos", "*.*")])
+        if archivo:
+            print("Archivo seleccionado:", archivo)
+            #Lógica de lectura del archivo
+        
+    boton_cargar = ttk.Button(v, text="Cargar archivo", command=cargar_archivo)
+    boton_cargar.place(x=10,y=10)
+    
     # consolas
     consola_in = Text(v, height=10, width=90)
     consola_in.place(x=50, y=205)
@@ -135,9 +197,7 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     consola_out = Text(v, height=10, width=90)
     consola_out.place(x=50, y=405)
     consola_out.insert('end', console_log)
-
     v.mainloop()
-
 
 App()
 # mostrarInicio()
