@@ -231,7 +231,7 @@ class Bucket:
 
     @classmethod
     def modify(self, path, body):
-        path = self.get_absolute_path(path)
+        path = self.get_absolute_path_bucket(path)
         body = body.strip('\"')
         msg = ''
         try:
