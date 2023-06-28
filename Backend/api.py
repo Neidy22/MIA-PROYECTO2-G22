@@ -24,6 +24,17 @@ def input_command():
     return msg
 
 
+@app.route("/file", methods=['POST'])
+def input_file():
+    data_input = request.data.decode()
+    msg = 'Debes ingresar un comando válido!'
+    if data_input != '':
+        print(data_input)
+        msg = myFileSystem.run_file(data_input)
+
+    return msg
+
+
 @app.route("/file_content", methods=['GET'])
 def send_file_content():
     command = request.params
