@@ -166,6 +166,15 @@ class myFileSystem:
 
         return msg
 
+    @classmethod
+    def send_file_content(self, type, name):
+        msg = ''
+        if type == SERVER:
+            msg = Server.open(None, None, name)
+        else:
+            msg = Bucket.open(None, None, name)
+        return msg
+
 
 '''
 content = ''
