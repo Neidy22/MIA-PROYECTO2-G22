@@ -2,6 +2,8 @@ import os
 import boto3
 from creds import REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 from pathlib import Path
+from server import Server
+
 
 # indicando que voy  a consumir el servicio de s3 con las credenciales
 s3 = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY_ID,
@@ -20,6 +22,33 @@ BUCKET_NAME = 'bucket-mia-proyecto2'
 
 
 class Bucket:
+
+    @classmethod
+    def create(self, ruta, nombre, contenido):
+        mensaje = ""
+        ruta = self.get_absolute_path_bucket(ruta)
+        rutaArchivo = ruta+nombre
+        try:
+            carpetas = ruta.split('/')  # Separando las carpetas de la ruta
+            carpetaActual = ''
+            # Si las carpetas que conforman la ruta no existen, se crean
+            for carpeta in carpetas:
+                if carpetaActual:
+                    existeCarpeta = s3.list_objects_v2(
+                        Bucket=BUCKET_NAME, Prefix=carpetaActual)
+                    if 'Contents' not in existeCarpeta:
+                        # La lista de objetos con el prefijo de la carpetaActual está vacía, no existe la carpeta, se crea
+                        s3.put_object(Bucket=BUCKET_NAME, Key=carpetaActual)
+
+                carpetaActual = os.path.join(carpetaActual, carpeta)
+
+            # Crear el archivo en la ruta completa
+            s3.put_object(Bucket=BUCKET_NAME,
+                          Key=rutaArchivo, Body=contenido)
+            mensaje = "Archivo creado en Amazon S3, en la ruta: " + ruta
+        except Exception as e:
+            mensaje = "Error al crear el archivo por la excepcion: " + str(e)
+        return mensaje
 
     @classmethod
     def delete(self, path, name):
@@ -67,8 +96,39 @@ class Bucket:
         return msg
 
     @classmethod
-    def transfer_server_bucket(self):
-        pass
+    def transfer_server_bucket(self, from_path, to_path):
+        msg = ''
+        # crear los archivos de la ruta from path en el bucket en la ruta to_path
+        aux_from = self.get_absolute_path_server(from_path)
+        try:
+            for dirpath, dirnames, filenames in os.walk(aux_from):
+                for filename in filenames:
+                    # print(f"File: {os.path.join(dirpath, filename)}")
+                    aux_path = dirpath.split('/')[4:]
+                    aux_path = "/".join(aux_path)
+
+                    body = ''
+
+                    with open(dirpath+'/'+filename, 'r') as file:
+                        body = file.read()
+
+                    self.create(to_path+aux_path+"/", filename, body)
+
+            # eliminar los archivos en la ruta from path del server
+            if from_path.endswith('/'):  # es carpeta
+                Server.delete(from_path, None)
+            else:  # es archivo
+                path = from_path.split('/')[:-1]
+                name = from_path.split('/')[-1]
+                Server.delete(path, name)
+
+            msg = 'Transferencia server{} - bucket{} exitosa.'.format(
+                from_path, to_path)
+
+        except:
+            msg = 'Ocurrió un error! No se ha podido realizar la transferencia server-bucket'
+
+        return msg
 
     @classmethod
     def transfer_bucket_server(self, from_path, to_path):
@@ -136,7 +196,7 @@ class Bucket:
             msg = "Tranferencia bucket-bucket exitosa"
 
         except:
-            msg = "Ocurrión un error! No se pudo hacer la transferencia bucket-bucket"
+            msg = "Ocurrió un error! No se pudo hacer la transferencia bucket-bucket"
 
         return msg
 
@@ -282,4 +342,5 @@ class Bucket:
 # print(Bucket.recovery_bucket_bucket(None, None, '/"copia g22"/'))
 # print(Bucket.transfer_bucket_server('/"copia g22"/', '/"Probando"/'))
 # print(Bucket.transfer_bucket_server('/borrar1.txt', '/"prueba 2"/'))
-print(Bucket.transfer_bucket_bucket('/borrar2/', '/"Pruebas a modificar"/'))
+# print(Bucket.transfer_bucket_bucket('/borrar2/', '/"Pruebas a modificar"/'))
+print(Bucket.transfer_server_bucket('/"prueba 2"/', '/"Nuevo transfer"/'))

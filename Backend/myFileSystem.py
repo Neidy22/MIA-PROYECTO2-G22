@@ -91,13 +91,16 @@ class myFileSystem:
                 msg = Server.transfer_server_server(
                     command.parameters.get('from'), command.parameters.get('to'))
             else:  # transferencia server-bucket
-                pass
+                msg = Bucket.transfer_server_bucket(
+                    command.parameters.get('from'), command.parameters.get('to'))
         else:
             # transferencia bucket-server
             if command.parameters.get('type_to').lower() == SERVER:
-                pass
+                msg = Bucket.transfer_bucket_server(
+                    command.parameters.get('from'), command.parameters.get('to'))
             else:  # transferencia bucket-bucket
-                pass
+                msg = Bucket.transfer_bucket_bucket(
+                    command.parameters.get('from'), command.parameters.get('to'))
 
         return msg
 
@@ -133,13 +136,16 @@ class myFileSystem:
                 msg = Server.recovery_server_server(command.parameters.get(
                     'ip'), command.parameters.get('port'), command.parameters.get('name'))
             else:  # recovery server-bucket
-                pass
+                msg = Bucket.recovery_server_bucket(command.parameters.get(
+                    'ip'), command.parameters.get('port'), command.parameters.get('name'))
         else:
             # recovery bucket-server
             if command.parameters.get('type_to').lower() == SERVER:
-                pass
+                msg = Bucket.recovery_bucket_server(command.parameters.get(
+                    'ip'), command.parameters.get('port'), command.parameters.get('name'))
             else:  # recovery bucket-bucket
-                pass
+                msg = Bucket.recovery_bucket_bucket(command.parameters.get(
+                    'ip'), command.parameters.get('port'), command.parameters.get('name'))
 
         return msg
 

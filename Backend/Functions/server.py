@@ -22,11 +22,12 @@ class Server:
 
         else:  # remover la carpeta
             try:
-                os.rmdir(path)
+                shutil.rmtree(path)
                 msg = 'La carpeta {} fue eliminada exitosamente \n'.format(
-                    name)
+                    path)
             except OSError as e:
-                msg = 'La carpeta {} no existe en el sistema \n'.format(path)
+                msg = 'La carpeta {} no existe en el sistema \n {}'.format(
+                    path, e)
         return msg
 
     @classmethod
@@ -66,7 +67,7 @@ class Server:
             from_path = from_path[1:]
             new_path = f'{to_path}{from_path}'
             new_path = self.get_absolute_path(new_path)
-            print("La ruta server server es " + new_path)
+            # print("La ruta server server es " + new_path)
 
         if os.path.exists(path_src):  # verificar que la ruta origen exista
 
@@ -79,7 +80,7 @@ class Server:
             # Verificando si la ruta que se creará al mover los archivos ya existe, para renombrarla
 
             try:
-                shutil.move(path_src, path_dst)
+                shutil.move(path_src, path_dst, copy_function=shutil.copytree)
                 msg = f"La transferencia de {path_src} a {path_dst} fue exitosa"
             except shutil.Error as e:
                 msg = e
@@ -141,4 +142,7 @@ print(Server.transfer_server_server('/"Pruebas a modificar"/transferir.txt',
       '/"Pruebas a borrar"/borrar2'))
 print(Server.delete('/"Pruebas a borrar"/borrar2/', "borrado 2.txt"))
 
+
+print(Server.transfer_server_server('/"Pruebas a modificar"/',
+      '/Probando/'))
 '''
