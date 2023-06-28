@@ -60,6 +60,16 @@ class myFileSystem:
     @classmethod
     def execute_create(self, command):
         msg = ''
+        # ejecutará el comando en el servidor
+        if command.parameters.get('type').lower() == SERVER:
+
+            msg = Server.delete(command.parameters.get(
+                'path'), command.parameters.get('name'))
+
+        else:  # ejecutará el comando en el bucket
+            msg = Bucket.delete(command.parameters.get(
+                'path'), command.parameters.get('name'))
+
         return msg
 
     @classmethod
