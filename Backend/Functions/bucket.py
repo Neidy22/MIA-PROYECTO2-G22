@@ -250,6 +250,7 @@ class Bucket:
     @classmethod
     def rename(self, ruta, nuevoNombre):
         ruta = self.get_absolute_path_bucket(ruta)
+        print(ruta)
         # Verificar si la ruta de origen existe
         try:
             s3.head_object(Bucket=BUCKET_NAME, Key=ruta)
@@ -534,9 +535,10 @@ class Bucket:
     @classmethod
     def backupBucketToBucket(self, nombre_backup):
         # Ruta de la carpeta archivos en el bucket
-        ruta_archivos = '/home/ubuntu/Archivos/'
-        ruta_backup = '/home/ubuntu/' + nombre_backup + \
-            '/'  # Ruta de la carpeta backup en el bucket
+        # ruta_archivos = '/home/ubuntu/Archivos/'
+        ruta_archivos = self.get_absolute_path_bucket(nombre_backup)
+        # ruta_backup = '/home/ubuntu/' + nombre_backup + \
+        #    '/'  # Ruta de la carpeta backup en el bucket
 
         try:
             # Se obtiene la lista de archivos o carpetas
@@ -561,9 +563,11 @@ class Bucket:
     @classmethod
     def backupBucketToServer(self, nombre_backup):
         # Ruta de la carpeta archivos en el bucket
-        ruta_archivos = '/home/ubuntu/Archivos/'
-        ruta_backup = '/home/ubuntu/' + nombre_backup + \
-            '/'  # Ruta de la carpeta backup en el server
+        # ruta_archivos = '/home/ubuntu/Archivos/'
+        ruta_archivos = self.get_absolute_path_bucket("/")
+        ruta_backup = self.get_absolute_path_server(nombre_backup)
+        # ruta_backup = '/home/ubuntu/' + nombre_backup + \
+        #    '/'  # Ruta de la carpeta backup en el server
         try:
             # Creando la carpeta del backup en el server
             os.makedirs(ruta_backup)
@@ -589,7 +593,8 @@ class Bucket:
 
     @classmethod
     def delete_all(self):
-        ruta = '/home/ubuntu/Archivos/'  # Reemplazar con la ruta que estara en el bucket
+        # ruta = '/home/ubuntu/Archivos/'  # Reemplazar con la ruta que estara en el bucket
+        ruta = self.get_absolute_path_bucket('/')
         # Obteniendo todos los objetos en el bucket
         objetos = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=ruta)
 
