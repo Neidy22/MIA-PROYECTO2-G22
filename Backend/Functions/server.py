@@ -46,7 +46,7 @@ class Server:
         return msg
 
     @classmethod 
-    def copyServerServer(self, origen, destino): #Faltan validaciones de tipos de from y to
+    def copyServerServer(self, origen, destino):
         mensaje = ""
         origen = self.get_absolute_path(origen).replace("\"", "")
         destino = self.get_absolute_path(destino).replace("\"", "")
@@ -152,11 +152,33 @@ class Server:
             msg = f'Error! La ruta de la que deseas transferir {path_src} no existe en el sistema'
 
         return msg
+    
+    @classmethod
+    def backupServerServer(nombre_backup):
+        ruta_archivos = '/home/ubuntu/Archivos/'
+        ruta_backup = '/home/ubuntu/' + nombre_backup + "/"
+        try:
+            os.makedirs(ruta_backup) #Creando la carpeta del Backup
+            #Se copian todos los archivos de la carpeta Archivos
+            shutil.copytree(ruta_archivos, ruta_backup)
+            return "El backup se ha creado exitosamente en la carpeta: " + ruta_backup
+        except Exception as e:
+            return "Error al realizar el backup: " + str(e)
 
     @classmethod
     def recovery_server_server(self, ip, port, name):
 
         name = self.get_absolute_path(name)  # la ruta abosulta en el proyecto
+        
+    @classmethod
+    def borrar_contenido_carpeta(self):
+        ruta = "/home/ubuntu/Archivos/" #Ruta de la carpeta archivos en el server
+        try:
+            shutil.rmtree(ruta)
+            return "Se ha vaciado la carpeta Archivos en el server."
+        except Exception as e:
+            print("Error al eliminar el contenido de la carpeta: " + str(e))
+            return "Error al vaciar la carpeta archivos."
 
     @classmethod
     def open(self, ip, port, name):
