@@ -38,7 +38,6 @@ class App():
 
 # -------------------------------------------------------------------REQUESTS-------------------------------------------------------------------
 
-
     def connect_request(self):
         global ip
         url = f'http://{ip}:5000'  # --> endpoint para probar la conexión
@@ -190,13 +189,15 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     b = ttk.Button(v, text="Reporte", command=obtener_console_text)
     b.place(x=700, y=175)
 
-    bCerrarS = ttk.Button(v, text="Cerrar Sesión", command=v.destroy, width=12)
+    bCerrarS = ttk.Button(v, text="Cerrar Sesión",
+                          command=v.destroy, width=12)
     bCerrarS.place(x=375, y=650)
 
     # Explorador de archivos
     def cargar_archivo():
 
-        archivo = filedialog.askopenfilename(filetypes=[("Todos los archivos", "*.*")])
+        archivo = filedialog.askopenfilename(
+            filetypes=[("Todos los archivos", "*.*")])
 
         if archivo:
             print("Archivo seleccionado:", archivo)

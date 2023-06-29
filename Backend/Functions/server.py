@@ -180,8 +180,8 @@ class Server:
 
     @classmethod
     def backupServerServer(self, nombre_backup):
-        ruta_archivos = '/home/ubuntu/Archivos/'
-        ruta_backup = '/home/ubuntu/' + nombre_backup + "/"
+        ruta_archivos = self.get_absolute_path('/')
+        ruta_backup = self.get_absolute_path(nombre_backup)
         try:
             os.makedirs(ruta_backup)  # Creando la carpeta del Backup
             # Se copian todos los archivos de la carpeta Archivos
