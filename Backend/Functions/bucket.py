@@ -156,7 +156,6 @@ class Bucket:
 
         if origen.endswith('/'):  # La ruta de origen es de una carpeta
 
-            '''
             objetos = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=origen)
 
             if 'Contents' not in objetos:
@@ -172,8 +171,7 @@ class Bucket:
                                  Key=origenArchivo, Filename=destinoArchivo)
             print("Los archivos han sido copiados exitosamente a la máquina virtual.")
 
-            '''
-            self.download_folder(BUCKET_NAME, origen, destino)
+            # self.download_folder(BUCKET_NAME, origen, destino)
 
             return "Los archivos han sido copiados exitosamente a la máquina virtual."
         else:
