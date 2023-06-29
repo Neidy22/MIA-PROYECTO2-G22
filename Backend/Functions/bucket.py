@@ -502,9 +502,10 @@ class Bucket:
     @classmethod
     def backupServerToBucket(self, nombre_backup):
         # Ruta de la carpeta archivos en el server
-        ruta_archivos = '/home/ubuntu/Archivos/'
-        ruta_backup = '/home/ubuntu/' + nombre_backup + \
-            '/'  # Ruta de la carpeta backup en el bucket
+        # ruta_archivos = '/home/ubuntu/Archivos/'
+        ruta_archivos = self.get_absolute_path_server('/')
+        # ruta_backup = '/home/ubuntu/' + nombre_backup + \
+        #    '/'  # Ruta de la carpeta backup en el bucket
         try:
             s3.put_object(Bucket=BUCKET_NAME, Key=nombre_backup + '/')
 
@@ -555,7 +556,7 @@ class Bucket:
 
                 if nombre_objeto:
                     # Se sube el objeto a la carpeta del backup
-                    ruta_destino = nombre_backup + '/' + nombre_objeto
+                    ruta_destino = 'Archivos/'+nombre_backup + '/' + nombre_objeto
                     s3.copy_object(Bucket=BUCKET_NAME, CopySource={
                                    'Bucket': BUCKET_NAME, 'Key': ruta_objeto}, Key=ruta_destino)
             print("El backup se ha creado exitosamente en el bucket: " + BUCKET_NAME)

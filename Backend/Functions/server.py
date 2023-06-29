@@ -179,7 +179,7 @@ class Server:
             pass
 
     @classmethod
-    def backupServerServer(nombre_backup):
+    def backupServerServer(self, nombre_backup):
         ruta_archivos = '/home/ubuntu/Archivos/'
         ruta_backup = '/home/ubuntu/' + nombre_backup + "/"
         try:
