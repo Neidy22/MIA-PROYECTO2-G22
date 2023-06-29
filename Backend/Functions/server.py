@@ -99,6 +99,7 @@ class Server:
     @classmethod
     def rename(self, ruta, nuevoNombre):
         mensaje = ""
+        nuevoNombre = nuevoNombre.replace('"', "")
         rutaAbs = self.get_absolute_path(ruta)
         if os.path.isfile(rutaAbs):  # Si es archivo
             piezas = ruta.split("/")

@@ -255,6 +255,7 @@ class Bucket:
     def rename(self, ruta, nuevoNombre):
         ruta = self.get_absolute_path_bucket(ruta)
         print(ruta)
+        nuevoNombre = nuevoNombre.replace('"', "")
         # Verificar si la ruta de origen existe
         try:
             s3.head_object(Bucket=BUCKET_NAME, Key=ruta)

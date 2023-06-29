@@ -182,6 +182,7 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
     t2.place(x=50, y=385)
 
     def obtener_console_text():
+        consola_out.delete('1.0', END)
         input_log = consola_in.get("1.0", "end-1c")
         send_input(input_log)
         consola_out.insert('end', console_log)
@@ -204,6 +205,7 @@ def mostrarInicio():  # Ventana a la que se ingresa si es que se inició sesión
             # Lógica de lectura del archivo
 
             with open(archivo, 'r') as f:
+                consola_out.delete('1.0', END)
                 body = f.read()
                 send_input_file(body)
                 consola_out.insert('end', console_log)
