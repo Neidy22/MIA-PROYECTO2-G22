@@ -570,7 +570,7 @@ class Bucket:
         #    '/'  # Ruta de la carpeta backup en el server
         try:
             # Creando la carpeta del backup en el server
-            os.makedirs(ruta_backup)
+            os.mkdir(ruta_backup)
             # Obteniendo la lista de archivos y carpetas
             contenido = s3.list_objects_v2(
                 Bucket=BUCKET_NAME, Prefix=ruta_archivos)
