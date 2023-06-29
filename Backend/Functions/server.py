@@ -192,7 +192,8 @@ class Server:
 
     @classmethod
     def delete_all(self):
-        ruta = "/home/ubuntu/Archivos/"  # Ruta de la carpeta archivos en el server
+        # Ruta de la carpeta archivos en el server
+        ruta = self.get_absolute_path('/')
         try:
             shutil.rmtree(ruta)
             return "Se ha vaciado la carpeta Archivos en el server."
