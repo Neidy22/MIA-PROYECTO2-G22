@@ -18,3 +18,4 @@ open -type->server -name->archivo1.txt
 open -type->bucket -ip->3.144.137.114 -name->"archivo1.txt" -port->3000
 
 
+

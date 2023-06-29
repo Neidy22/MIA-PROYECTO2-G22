@@ -616,7 +616,7 @@ class Bucket:
 
     @classmethod
     def open(self, ip, port, name):
-        name = self.get_absolute_path(name)
+        name = self.get_absolute_path_bucket(name)
 
         msg = ''
         try:

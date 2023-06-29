@@ -1,0 +1,41 @@
+creatE -name->calificacion1.txt -path->/carpeta_calificacion1/ -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1 calificacion" -type->server
+Create -name->calificacion2.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion2 carpeta_calificacion1 calificacion" -Type->server
+Create -namE->calificacion3.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion3 carpeta_calificacion1 calificacion" -Type->server
+Create -namE->calificacion4.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion4 carpeta_calificacion1 calificacion" -Type->server
+creatE -name->calificacion1.txt -path->/carpeta_calificacion1/ -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1 calificacion" -type->bucket
+Create -name->calificacion2.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion2 carpeta_calificacion1 calificacion" -Type->bucket
+Create -namE->calificacion3.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion3 carpeta_calificacion1 calificacion" -Type->bucket
+Create -namE->calificacion4.txt -path->/carpeta_calificacion1/ -body->"Contenido del archivo calificacion4 carpeta_calificacion1 calificacion" -Type->bucket
+MODIFY -path->/carpeta_calificacion1/calificacion1.txt -type->bucket -bodY->"Contenido del archivo calificacion1 carpeta_calificacion1 en el bucket calificacion"
+MODIFy -path->/carpeta_calificacion1/calificacion2.txt -Type->bucket -body->"Contenido del archivo calificacion2 carpeta_calificacion1 en el bucket calificacion"
+MoDIFY -path->/carpeta_calificacion1/calificacion3.txt -Type->bucket -body->"Contenido del archivo calificacion3 carpeta_calificacion1 en el bucket calificacion"
+modifY -path->/carpeta_calificacion1/calificacion4.txt -Type->bucket -body->"Contenido del archivo calificacion4 carpeta_calificacion1 en el bucket calificacion"
+DELETE -path->/carpeta_calificacion1/ -name->calificacion4.txt -Type->server 
+creatE -name->calificacion1.txt -path->/"carpeta ejemplo_calificacion"/ -bodY->"Contenido del archivo calificacion1 carpeta ejemplo calificacion" -type->server
+Create -name->calificacion2.txt -path->/"carpeta ejemplo_calificacion"/ -body->"Contenido del archivo calificacion2 carpeta ejemplo calificacion" -Type->server
+Create -namE->calificacion3.txt -path->/"carpeta ejemplo_calificacion"/ejemplo1/ -body->"Contenido del archivo calificacion3 carpeta ejemplo calificacion" -Type->server
+Create -namE->calificacion4.txt -path->/"carpeta ejemplo_calificacion"/ejemplo1/ -body->"Contenido del archivo calificacion4 carpeta ejemplo calificacion" -Type->server
+Create -namE->calificacion3.txt -path->/"carpeta ejemplo_calificacion"/ejemplo2/ -body->"Contenido del archivo calificacion3 carpeta ejemplo 2 calificacion" -Type->server
+Create -namE->calificacion4.txt -path->/"carpeta ejemplo_calificacion"/ejemplo2/ -body->"Contenido del archivo calificacion4 carpeta ejemplo 2 calificacion" -Type->server
+Create -namE->calificacion3.txt -path->/"carpeta ejemplo_calificacion"/ejemplo3/ -body->"Contenido del archivo calificacion3 carpeta ejemplo 2 calificacion" -Type->server
+Create -namE->calificacion4.txt -path->/"carpeta ejemplo_calificacion"/ejemplo3/ -body->"Contenido del archivo calificacion4 carpeta ejemplo 2 calificacion" -Type->server
+DELETE -TYPE->server -paTh->/"carpeta ejemplo_calificacion"/ejemplo3/ -name->calificacion4.txt 
+MoDIFY -path->/"carpeta ejemplo_calificacion"/ejemplo1/calificacion3.txt -Type->server -body->"Contenido del archivo calificacion3 carpeta ejemplo ejemplo1 calificacion"
+modifY -path->/"carpeta ejemplo_calificacion"/ejemplo1/calificacion4.txt -Type->server -body->"Contenido del archivo calificacion4 carpeta ejemplo ejemplo1 calificacion"
+rename -path->/carpeta_calificacion1/calificacion1.txt -type->bucket -Name->"calificacion bucket 1.txt"
+rename -path->/carpeta_calificacion1/calificacion2.txt -type->bucket -Name->"calificacion bucket 2.txt"
+rename -path->/carpeta_calificacion1/calificacion1.txt -type->server -Name->"calificacion server 1.txt"
+Delete -TYPE->bucket -paTh->/carpeta_calificacion1/ -name->calificacion4.txt
+creatE -name->calificacion1.txt -path->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo3/ -bodY->"Contenido del archivo calificacion1 carpeta ejemplo calificacion" -type->bucket
+Create -name->calificacion2.txt -path->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo3/ -body->"Contenido del archivo calificacion2 carpeta ejemplo calificacion" -Type->bucket
+Create -namE->calificacion3.txt -path->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo4/ -body->"Contenido del archivo calificacion3 carpeta ejemplo calificacion" -Type->bucket
+Create -namE->calificacion4.txt -path->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo4/ -body->"Contenido del archivo calificacion4 carpeta ejemplo calificacion" -Type->bucket
+copy -from->/"carpeta ejemplo_calificacion"/ejemplo2/ -type_from->server -type_to->server -to->/"carpeta ejemplo_calificacion"/
+copy -from->/"carpeta ejemplo_calificacion"/ejemplo2/ -to->/"carpeta ejemplo_calificacion"/ejemplo1/ -type_from->server -type_to->server
+copy -from->/"carpeta ejemplo_calificacion"/ejemplo2/ -to->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ -type_from->server -type_to->bucket
+copy -from->/"carpeta ejemplo_calificacion"/ejemplo2/ -to->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ -type_from->server -type_to->bucket
+copy -to->/"carpeta ejemplo_calificacion"/ejemplo2/ -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->server
+copy -to->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/  -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket
+Transfer -from->/carpeta_calificacion1/"calificacion server 1.txt" -type_from->server -type_to->server -to->/"carpeta ejemplo_calificacion"/
+Transfer -to->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo3/ -from->/carpeta_calificacion1/"calificacion bucket 1.txt" -type_from->bucket -type_to->bucket
+Transfer -from->/carpeta_calificacion1/"carpeta ejemplo_calificacion"/ejemplo3/calificacion1.txt -to->/"carpeta ejemplo_calificacion"/ -type_from->bucket -type_to->server

@@ -220,7 +220,7 @@ class Server:
 
         else:  # se abre en nuestro servidor desde otro servidor o bucket
             command = {'name': name, 'type': 'server'}
-            url = 'http://{ip}:{port}/file_content'.format(ip, port)
+            url = 'http://{}:{}/file_content'.format(ip, port)
             req = requests.get(url, params=command)
             msg = req.text
 
