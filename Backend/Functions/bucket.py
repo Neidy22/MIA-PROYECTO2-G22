@@ -570,7 +570,8 @@ class Bucket:
         #    '/'  # Ruta de la carpeta backup en el server
         try:
             # Creando la carpeta del backup en el server
-            os.mkdir(ruta_backup)
+            # os.mkdir(ruta_backup)
+            '''
             # Obteniendo la lista de archivos y carpetas
             contenido = s3.list_objects_v2(
                 Bucket=BUCKET_NAME, Prefix=ruta_archivos)
@@ -583,6 +584,9 @@ class Bucket:
                     # Descargando el objeto y guardandolo en la carpeta del backup
                     ruta_destino = os.path.join(ruta_backup, nombre_objeto)
                     s3.download_file(BUCKET_NAME, ruta_objeto, ruta_destino)
+
+            '''
+            self.download_folder(BUCKET_NAME, 'Archivos/', ruta_backup)
 
             print(
                 "El backup se ha creado exitosamente en la máquina virtual en la ruta: " + ruta_backup)
